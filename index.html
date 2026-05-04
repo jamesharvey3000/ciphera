@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ciphera Daily — Crack the Code</title>
+  <meta name="description" content="A new encrypted message drops every day. Decode the cipher, solve the clue, climb the leaderboard." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0E0E10;
+      --surface:  #1A1A1E;
+      --primary:  #EDE9DD;
+      --secondary:#8A8A8E;
+      --accent:   #D4A24C;
+      --success:  #5A8C5F;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--primary);
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    nav {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 32px;
+    }
+
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+    }
+
+    nav a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 60px 32px 80px;
+      max-width: 680px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .hero-sub {
+      color: var(--secondary);
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 14px 32px;
+      border-radius: 999px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-secondary {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      padding: 14px 32px;
+      border-radius: 999px;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover { background: var(--accent); color: var(--bg); }
+
+    /* ── Sample card ── */
+    .sample-card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 380px;
+      width: 90%;
+      margin: 0 auto 80px;
+      text-align: center;
+    }
+
+    .card-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: var(--secondary);
+      margin-bottom: 16px;
+    }
+
+    .cipher-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+
+    .arrow {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+
+    .plain-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--success);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── How it works ── */
+    .section {
+      width: 100%;
+      max-width: 900px;
+      padding: 0 32px 80px;
+    }
+
+    .section-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .step {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px 24px;
+    }
+
+    .step-num {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .step h3 {
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 0.8rem;
+      color: var(--secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Ciphers grid ── */
+    .ciphers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .cipher-pill {
+      background: var(--surface);
+      border: 1px solid rgba(212,162,76,0.2);
+      color: var(--secondary);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      border-radius: 999px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 28px 32px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    footer a {
+      color: var(--secondary);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">CIPHERA DAILY</span>
+    <a href="privacy.html">PRIVACY POLICY</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="badge">AVAILABLE ON THE APP STORE</div>
+    <h1>CRACK THE<br><span>CIPHER.</span><br>SOLVE THE CLUE.</h1>
+    <p class="hero-sub">
+      A new encrypted message drops every day at dawn.<br>
+      Decode it, figure out what it refers to, and climb the leaderboard.
+    </p>
+    <div class="cta-group">
+      <a href="#" class="btn-primary">DOWNLOAD FREE</a>
+      <a href="#how" class="btn-secondary">HOW IT WORKS</a>
+    </div>
+  </section>
+
+  <!-- Sample cipher card -->
+  <div class="sample-card">
+    <div class="card-label">TODAY'S TRANSMISSION</div>
+    <div class="cipher-text">KHOOR ZRUOG</div>
+    <div class="arrow">SHIFT −3 →</div>
+    <div class="plain-text">HELLO WORLD</div>
+  </div>
+
+  <!-- How it works -->
+  <section class="section" id="how">
+    <div class="section-title">// HOW IT WORKS</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01 — DECRYPT</div>
+        <h3>CRACK THE CIPHER</h3>
+        <p>Each day's message is encoded with one of eight classic ciphers. Figure out the method and decode it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02 — SOLVE</div>
+        <h3>IDENTIFY THE CLUE</h3>
+        <p>The decoded message is a clue. Figure out what it's referring to — a person, place, event, or thing.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03 — SCORE</div>
+        <h3>CLIMB THE RANKS</h3>
+        <p>Your score starts at 100. Wrong guesses and hints cost points. Minimum score is 10 — you always earn something.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ciphers -->
+  <section class="section">
+    <div class="section-title">// CIPHER TYPES</div>
+    <div class="ciphers">
+      <span class="cipher-pill">CAESAR</span>
+      <span class="cipher-pill">ATBASH</span>
+      <span class="cipher-pill">A1Z26</span>
+      <span class="cipher-pill">VIGENÈRE</span>
+      <span class="cipher-pill">RAIL FENCE</span>
+      <span class="cipher-pill">SUBSTITUTION</span>
+      <span class="cipher-pill">PIGPEN</span>
+      <span class="cipher-pill">MORSE CODE</span>
+    </div>
+  </section>
+
+  <footer>
+    <a href="privacy.html">PRIVACY POLICY</a>
+    <a href="mailto:birdiesawyer@gmail.com">CONTACT</a>
+  </footer>
+
+</body>
+</html>
